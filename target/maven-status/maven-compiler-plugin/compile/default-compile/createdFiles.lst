@@ -1,0 +1,12 @@
+com\faimdata\dataloader\content\Content.class
+com\faimdata\dataloader\datatype\DataType.class
+com\faimdata\dataloader\EntryPoint.class
+com\faimdata\dataloader\singleton\PropertiesFactory.class
+com\faimdata\dataloader\obj\DBInfo.class
+com\faimdata\dataloader\database\Connector.class
+com\faimdata\dataloader\obj\InputSchema.class
+com\faimdata\dataloader\obj\Output.class
+com\faimdata\dataloader\database\PushData.class
+com\faimdata\dataloader\util\Utils.class
+com\faimdata\dataloader\obj\Input.class
+com\faimdata\dataloader\reader\FileReader.class
