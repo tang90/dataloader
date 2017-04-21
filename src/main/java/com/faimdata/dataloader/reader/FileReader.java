@@ -1,6 +1,8 @@
 package com.faimdata.dataloader.reader;
 
 import com.faimdata.dataloader.content.Content;
+import com.faimdata.dataloader.database.Connector;
+import com.faimdata.dataloader.database.PushData;
 import com.faimdata.dataloader.singleton.PropertiesFactory;
 import com.faimdata.dataloader.util.Utils;
 
@@ -50,7 +52,7 @@ public class FileReader
                 contentCount ++;
 
                 columns = line.split(PropertiesFactory.input.getSeparator());
-
+               
                 if(columns != null && columns.length > 0)
                 {
                     if(!Utils.validateLine(columns, PropertiesFactory.input.getInputSchema(), PropertiesFactory.input.getDateFormat()))
@@ -62,6 +64,17 @@ public class FileReader
                     {
                         content.appendLine(columns);
                         goodCount ++;
+                        //Write data
+                        
+                        if (PropertiesFactory.output.getBatchSize()>0&&goodCount%PropertiesFactory.output.getBatchSize()==0){
+                        Connector conn = new Connector();
+                        PushData pd = new PushData();
+                        pd.setConnection(conn.getConnection());
+                        pd.setContent(content);
+                        pd.push();
+                        conn.closeConnection();
+                        content.empty();
+                        }
                     }
                 }
             }

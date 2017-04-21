@@ -3,8 +3,11 @@ package com.faimdata.dataloader.util;
 import com.faimdata.dataloader.datatype.DataType;
 import com.faimdata.dataloader.obj.InputSchema;
 
+import java.text.DateFormatSymbols;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -14,7 +17,9 @@ public class Utils
 {
     public static boolean validateValue(String value, String dataType, String dateType)
     {
-        if(dataType.toUpperCase().equals(DataType.String.getDataType().toUpperCase()))
+    	if (value.equals(""))
+            return true;
+    	if(dataType.toUpperCase().equals(DataType.String.getDataType().toUpperCase()))
         {
             return true;
         }
@@ -28,7 +33,7 @@ public class Utils
             }
             catch (Exception e)
             {
-                System.out.println("The value [" + value + "] of dataType [" + dateType + "] is invalidated"  );
+                System.out.println("The value [" + value + "] of dataType [" + dataType + "] is invalidated"  );
             }
         }
 
@@ -36,7 +41,22 @@ public class Utils
         {
             try
             {
-                if(value.substring(0,1).equals("$"))
+                if (value.charAt(0)=='(')
+                {
+                	String v=value.substring(1,value.length()-1);
+                	if(v.substring(0,1).equals("$"))
+                    {
+                        Double.parseDouble(v.substring(1));
+                        return true;
+                    }
+                    else
+                    {
+                        Double.parseDouble(v);
+                        return true;
+                    }
+                	
+                }
+                else if(value.substring(0,1).equals("$"))
                 {
                     Double.parseDouble(value.substring(1));
                     return true;
@@ -49,7 +69,7 @@ public class Utils
             }
             catch (Exception e)
             {
-                System.out.println("The value [" + value + "] of dataType [" + dateType + "] is invalidated"  );
+                System.out.println("The value [" + value + "] of dataType [" + dataType + "] is invalidated"  );
             }
         }
 
@@ -62,7 +82,7 @@ public class Utils
             }
             catch (Exception e)
             {
-                System.out.println("The value [" + value + "] of dataType [" + dateType + "] is invalidated"  );
+                System.out.println("The value [" + value + "] of dataType [" + dataType + "] is invalidated"  );
             }
         }
 
@@ -72,24 +92,43 @@ public class Utils
             {
                 return false;
             }
-
-            SimpleDateFormat formatter = new SimpleDateFormat(dateType);
+            
+            String v=new String(value);
+            /*if (dateType.equals("MM/dd/yyyy"))
+            {
+            	String[] ds=v.split("/");
+            	if (ds[0].length()<2)
+            		for (int i=ds[0].length();i<=2;i++)
+            			ds[0]="0"+ds[0];
+            	if (ds[1].length()<2)
+            		for (int i=ds[1].length();i<=2;i++)
+            			ds[1]="0"+ds[1];
+            	if (ds[2].length()<4)
+            		for (int i=ds[2].length();i<=4;i++)
+            			ds[2]="0"+ds[2];
+            	v=ds[0]+"/"+ds[1]+"/"+ds[2];
+            	System.out.println("v is "+v);
+            }*/
+            DateFormatSymbols sym = new DateFormatSymbols(Locale.US);
+            sym.setAmPmStrings(new String[] { "AM", "PM"});
+            SimpleDateFormat formatter = new SimpleDateFormat(dateType,Locale.US);
 
             try
             {
-                formatter.parse(value);
+                
+            	formatter.parse(v);
                 return true;
             }
             catch (Exception e)
             {
-                System.out.println("The value [" + value + "] of dataType [" + dateType + "] is invalidated"  );
+                System.out.println("The value [" + value + "] of dataType [" + dataType + "] is invalidated"  );
                 e.printStackTrace();
             }
         }
         return false;
     }
 
-    public static String getDefaultValue(String dataType)
+    public static String getDefaultValue(String dataType,String dateType)
     {
         if(dataType.toUpperCase().equals(DataType.String.getDataType().toUpperCase()))
         {
@@ -113,7 +152,13 @@ public class Utils
 
         if(dataType.toUpperCase().equals(DataType.Date.getDataType().toUpperCase()))
         {
-            return DataType.Date.getDefaultValue();
+        	
+        	DateFormatSymbols sym = new DateFormatSymbols(Locale.US);
+        	sym.setAmPmStrings(new String[] { "AM", "PM"});
+        	SimpleDateFormat formatter = new SimpleDateFormat(dateType,Locale.US);
+        	Date date=new Date();
+        	date.setTime(0);
+            return formatter.format(date);
         }
         return "";
     }
@@ -172,9 +217,9 @@ public class Utils
         String col;
         for (int i = 0; i < line.length; i ++)
         {
-            if(!validateValue(line[i], schema.get(new Integer(i+1)).getDataType(), schema.get(new Integer(i+1)).getDateFormat()))
+        	if(!validateValue(line[i], schema.get(new Integer(i+1)).getDataType(), schema.get(new Integer(i+1)).getDateFormat()))
             {
-                return false;
+            	return false;
             }
         }
         return true;

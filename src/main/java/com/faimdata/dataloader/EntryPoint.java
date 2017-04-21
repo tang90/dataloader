@@ -35,13 +35,7 @@ public class EntryPoint
             FileReader reader = new FileReader(inputFile);
             content = reader.process();
 
-            //Write data
-            Connector conn = new Connector();
-            PushData pd = new PushData();
-            pd.setConnection(conn.getConnection());
-            pd.setContent(content);
-            pd.push();
-            conn.closeConnection();
+   
         }
         catch(Exception e)
         {

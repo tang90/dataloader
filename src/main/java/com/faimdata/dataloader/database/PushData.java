@@ -113,7 +113,16 @@ public class PushData
 
         if(dataType.toUpperCase().equals(DataType.Double.getDataType().toUpperCase()))
         {
-            pstmt.setDouble(number, Double.parseDouble(value));
+            String v=new String(value);
+            double x=1;
+            if (v.startsWith("("))
+            {
+            	v=v.substring(1,v.length()-1);
+            	x=-1;
+            }
+            if (v.startsWith("$"))
+            	v=v.substring(1);
+            pstmt.setDouble(number, x*Double.parseDouble(v));
             return;
         }
 
@@ -125,8 +134,25 @@ public class PushData
 
         if(dataType.toUpperCase().equals(DataType.Date.getDataType().toUpperCase()))
         {
-            formatter = new SimpleDateFormat(dateFormat);
-            Date date = formatter.parse(value);
+            String v=new String(value);
+           /* if (dateFormat.equals("MM/dd/yyyy"))
+            {
+            	String[] ds=v.split("/");
+            	if (ds[0].length()<2)
+            		for (int i=ds[0].length();i<=2;i++)
+            			ds[0]="0"+ds[0];
+            	if (ds[1].length()<2)
+            		for (int i=ds[1].length();i<=2;i++)
+            			ds[1]="0"+ds[1];
+            	if (ds[2].length()<4)
+            		for (int i=ds[2].length();i<=4;i++)
+            			ds[2]="0"+ds[2];
+            	v=ds[0]+"/"+ds[1]+"/"+ds[2];
+            }
+            */
+            
+        	formatter = new SimpleDateFormat(dateFormat);
+            Date date = formatter.parse(v);
             pstmt.setTimestamp(number, new java.sql.Timestamp(date.getTime()));
             return;
         }

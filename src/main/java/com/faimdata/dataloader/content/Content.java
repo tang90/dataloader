@@ -26,7 +26,7 @@ public class Content
 
             for(int i = 0; i < PropertiesFactory.input.getColumnNumber(); i ++)
             {
-                if(i < oldLine.length)
+                if(i < oldLine.length&&!oldLine[i].equals(""))
                 {
                     line.add(oldLine[i]);
                 }
@@ -34,7 +34,8 @@ public class Content
                 {
                     //Append the default value to the missing columns
                     //Get the data type and retrieve the default value of this data type
-                    line.add(Utils.getDefaultValue(PropertiesFactory.input.getInputSchema().get(i+1).getDataType()));
+                    line.add(Utils.getDefaultValue(PropertiesFactory.input.getInputSchema().get(i+1).getDataType(),
+                    		PropertiesFactory.input.getInputSchema().get(i+1).getDateFormat()));
                 }
             }
             content.add(line);
@@ -49,5 +50,9 @@ public class Content
     public List<String> getLine(int line)
     {
         return this.content.get(line);
+    }
+    
+    public void empty(){
+    	content = new ArrayList<List<String>>();
     }
 }
